@@ -1,89 +1,63 @@
 const fruitForm = document.querySelector("#inputSection form");
 const fruitList = document.querySelector("#fruitSection ul");
-const fruitNutrition = document.querySelector("#nutritionSection p")
+const fruitNutrition = document.querySelector("#nutritionSection p");
 
-const fruitNutritionImages = document.querySelector("#nutritionSection img")
 const APIkey = '33986170-cb342e36e814b5e7e54b0ada5'
 
-
-
-
 fruitForm.addEventListener("submit", extractFruit);
-
-// fruitList.addEventListener("click", (e) => console.log(e.target))
-// fruitList.addEventListener("click", (e) => e.target.remove())
+let cal = 0;
+const fruitCal = {};
 
 function extractFruit(e) {
     e.preventDefault();
     let fruitInput = e.target.fruitInput.value;
-
     if (fruitInput) {
-        // addFruit(fruitInput);
         fetchFruitData(fruitInput);
     }
-
     e.target.reset();
 };
 
 
-function addFruit(fruit) {
+function addFruit(fruit, fruitImage) {
 
-    let cal = 0;
+    const img = document.createElement("img");
+    img.alt = fruit.name;
+    img.src = fruitImage.hits[0].previewURL;
 
-    console.log(fruit);
+    img.addEventListener("click", removeFruit, {once: true});
+    fruitList.appendChild(img);
 
-    //create list item
-    const li = document.createElement('li');
+    fruitCal[fruit.name] = fruit.nutritions.calories;
 
-    //assign text to list item
-    li.textContent = fruit['name'];
-
-    li.addEventListener('click', removeFruit)
-
-    // li.className = "list-item"
-
-    //append list item to the html list
-    fruitList.appendChild(li);
-
-    fruitNutrition.textContent = `Calorie count: ${cal += fruit.nutritions.calories}`
+    
+    cal += fruit.nutritions.calories;
+    fruitNutrition.textContent = `Calorie count: ${cal}`;
 };
 
 
 function removeFruit(e) {
+    const fruitName = e.target.alt;
+    cal -= fruitCal[fruitName];
+    fruitNutrition.textContent = cal;
+
+    delete fruitCal[fruitName];
     e.target.remove();
 }
 
 
 async function fetchFruitData(fruit) {
     try {
-        const resp = await fetch(`https://fruity-api.onrender.com/fruits/${fruit}`);
-        if (resp.ok) {
-            const data = await resp.json()
-            addFruit(data)
+        const respData = await fetch(`https://fruity-api.onrender.com/fruits/${fruit}`);
+        const respImage = await fetch(`https://pixabay.com/api/?key=${APIkey}&q=${fruit}&image_type=photo&pretty=true`);
+        if (respData.ok && respImage.ok) {
+            const data = await respData.json();
+            const imgData = await respImage.json();
+            addFruit(data, imgData);
         }
         else {
-            throw `Error; http status code = ${resp.status}`
+            throw new Error(resp)
         }
     } catch (e) {
         console.log(e);
     }
 }
-
-
-// function fetchFruitData(fruit) {
-//     fetch(`https://fruity-api.onrender.com/fruits/${fruit}`)
-//         .then(resp => processResponse(resp))
-//         .then(data => addFruit(data))
-//         .catch((e) => console.log(e))
-// }
-
-
-// function processResponse(resp) {
-//     if (resp.ok) {
-//         return resp.json()
-//     }
-//     else {
-//         throw `Error; http status code = ${resp.status}`
-//     }
-// }
-
