@@ -1,5 +1,6 @@
 const fruitForm = document.querySelector("#inputSection form");
 const fruitList = document.querySelector("#fruitSection ul");
+const fruitNutrition = document.querySelector("#nutritionSection p")
 
 fruitForm.addEventListener("submit", extractFruit);
 
@@ -11,7 +12,8 @@ function extractFruit(e) {
     let fruitInput = e.target.fruitInput.value;
 
     if (fruitInput) {
-        addFruit(fruitInput);
+        // addFruit(fruitInput);
+        fetchFruitData(fruitInput);
     }
 
     e.target.reset();
@@ -19,9 +21,16 @@ function extractFruit(e) {
 
 
 function addFruit(fruit) {
+
+    let cal = 0;
+
+    console.log(fruit);
+
+    //create list item
     const li = document.createElement('li');
 
-    li.textContent = fruit;
+    //assign text to list item
+    li.textContent = fruit['name'];
 
     li.addEventListener('click', removeFruit)
 
@@ -30,10 +39,30 @@ function addFruit(fruit) {
     //append list item to the html list
     fruitList.appendChild(li);
 
+    fruitNutrition.textContent = `Calorie count: ${cal += fruit.nutritions.calories}`
+
 
 };
 
-function removeFruit(e){
+function removeFruit(e) {
     e.target.remove();
+}
+
+
+function fetchFruitData(fruit) {
+    fetch(`https://fruity-api.onrender.com/fruits/${fruit}`)
+        .then(resp => processResponse(resp))
+        .then(data => addFruit(data))
+        .catch((e) => console.log(e))
+}
+
+
+function processResponse(resp) {
+    if (resp.ok) {
+        return resp.json()
+    }
+    else {
+        throw `Error; http status code = ${resp.status}`
+    }
 }
 
