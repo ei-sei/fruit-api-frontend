@@ -6,7 +6,8 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>fruit salad</title>
-    <script defer src="bundle.js"></script>
+    <script defer src="script.js"></script>
+    <!-- <script defer src="bundle.js"></script> -->
 
 </head>
 
@@ -14,8 +15,8 @@
     <section id="inputSection">
         <form>
             <label for="fruitInput">Enter fruit name</label>
-            <input id="fruitInput" type="text">
-            <input type="submit" value="submit">
+            <input name="fruit" id="fruitInput" type="text" placeholder="e.g. carrots" required>
+            <button type="submit" value="submit">Submit</button>
         </form>
     </section>
 
@@ -29,12 +30,12 @@
         </div>
     </section>
 
-    <section id="newInputSection">
+    <section>
         <form id="create-form">
-            <label for="newFruitInput">Enter a new fruit name</label>
-            <input id="newFruitInput" type="text">
-            <input type="submit" value="submit">
+            <input id="fruitInput" type="text" name="fruit" placeholder="name">
+            <input type="submit" value="Create">
         </form>
+        <p id="message"></p>
     </section>
 
 </body>
